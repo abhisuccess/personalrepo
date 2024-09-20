@@ -1,0 +1,245 @@
+body {
+  margin: 0; /* Reset margin */
+  overflow: hidden; /* Prevent scrollbars */
+}
+
+.App {
+  text-align: center;
+  position: relative;
+  width: 100%; /* Full width */
+  height: 100vh; /* Full height */
+  display: flex;
+  justify-content: center; /* Center elements */
+  align-items: center; /* Center elements */
+  background: url('./img/heart-themed-pink-valentine-wallpaper.jpg') no-repeat center center;
+  background-size: cover;
+  background-position: center center;
+}
+
+.message-icon {
+  width: 100px;
+  height: 100px;
+  background-color: #f3adbe;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  animation: pulse 1s infinite;
+  margin: 0 auto; /* Center the icon */
+}
+
+.message-icon:hover {
+  animation: shake 0.5s;
+}
+
+.envelope {
+  padding: 15px;
+  color: white;
+  font-size: 18px;
+}
+
+.heart-card {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  cursor: pointer;
+  animation: pump 2s infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto; /* Center the heart card */
+}
+
+.heart {
+  position: absolute;
+  background-color: red;
+  height: 120px;
+  width: 120px;
+  transform: rotate(-45deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.heart::before {
+  width: 120px;
+  height: 120px;
+  top: -60px;
+  left: 0px;
+}
+
+.heart::after {
+  width: 120px;
+  height: 120px;
+  top: 0px;
+  left: 60px;
+}
+
+#heart-text {
+  color: white;
+  font-size: 22px;
+  text-align: center;
+  position: absolute;
+  z-index: 1;
+}
+
+.final-message {
+  font-size: 20px;
+  background-color: rgb(243, 205, 227);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 1s ease-in-out;
+  margin: 20px; /* Add margin for spacing */
+}
+
+.heart-button {
+  padding: 10px 20px;
+  margin: 20px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.heart-button:hover {
+  transform: scale(1.1);
+}
+
+.yes {
+  background-color: pink;
+}
+
+.no {
+  background-color: lightblue;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .heart-card {
+      width: 150px; /* Adjust size for mobile */
+      height: 150px;
+  }
+  
+  .final-message {
+      font-size: 16px; /* Smaller font size */
+      padding: 20px; /* Less padding */
+  }
+
+  .heart-button {
+      padding: 8px 16px; /* Smaller button */
+      font-size: 14px; /* Smaller font size */
+  }
+
+  .message-icon {
+      width: 80px; /* Smaller icon */
+      height: 80px;
+  }
+
+  .heart {
+      width: 100px;
+      height: 100px;
+  }
+
+  .heart::before,
+  .heart::after {
+      width: 100px;
+      height: 100px;
+  }
+}
+
+/* Keyframes for animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pump {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Glitter Effect */
+.glitter-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Ensure glitter overlay does not block interactions */
+  z-index: 10; /* Ensure glitter overlay is above all other elements */
+}
+
+.glitter .sparkle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  animation: sparkleAnimation ease-in-out infinite;
+}
+
+@keyframes sparkleAnimation {
+  0% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-20px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.5; }
+}
+
+.heart-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  z-index: 11; /* Ensure heart message is above glitter effect */
+}
