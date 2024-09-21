@@ -243,21 +243,3 @@ body {
   color: #fff;
   z-index: 11; /* Ensure heart message is above glitter effect */
 }
-/* Add styles for the authentication page */
-.auth-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: black;
-}
-
-.loading-bar {
-  width: 100%;
-  max-width: 300px;
-  height: 10px;
-  background: #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-}

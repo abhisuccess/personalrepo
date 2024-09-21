@@ -7,7 +7,7 @@ import backgroundImage from './img/heart-themed-pink-valentine-wallpaper.jpg';
 import tutfile from './tutfile.mp3'; // Import your audio file
 
 function App() {
-  const [stage, setStage] = useState(0);  // Stage 0 is the authentication page
+  const [stage, setStage] = useState(1);
   const [typedMessage] = useState("My dearest, I’ve admired you for so long... Will you be mine forever?");
   const [isNoButtonVisible, setIsNoButtonVisible] = useState(true);
   const [noButtonAttempts, setNoButtonAttempts] = useState(0);
@@ -16,11 +16,6 @@ function App() {
   const [isGlitterBackground, setIsGlitterBackground] = useState(false); // Track if glitter background is active
   const [showHeartMessage, setShowHeartMessage] = useState(false); // Track if heart message is shown
   const [audio] = useState(new Audio(tutfile));
-  
-  // State for Authentication
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(0);
-  const correctPassword = 'love123'; // Set your password here
 
   const playAudio = () => {
     audio.loop = true;
@@ -80,26 +75,6 @@ function App() {
     }
   };
 
-  const handlePasswordChange = (e) => setPassword(e.target.value);
-
-  const handlePasswordSubmit = () => {
-    setLoading(1); // Start loading animation
-    const loadingInterval = setInterval(() => {
-      setLoading((prev) => {
-        if (prev >= 100) {
-          clearInterval(loadingInterval);
-          if (password === correctPassword) {
-            setStage(1); // Proceed to the message once authenticated
-          } else {
-            alert("Incorrect password, try again.");
-            setLoading(0); // Reset loading if incorrect
-          }
-        }
-        return prev + 10;
-      });
-    }, 200); // Increase loading by 10% every 200ms
-  };
-
   const renderGlitter = () => {
     const sparkleElements = Array.from({ length: 100 }).map((_, index) => (
       <div
@@ -130,53 +105,6 @@ function App() {
         position: 'relative', // Ensure glitter overlay is positioned correctly
       }}
     >
-      {stage === 0 && (
-        <div className="auth-container">
-          <h1 style={{ color: 'white' }}>Enter Password to Proceed</h1>
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={handlePasswordChange}
-            style={{
-              padding: '10px',
-              border: '2px solid white',
-              borderRadius: '5px',
-              marginBottom: '20px',
-              color: '#fff',
-              background: 'transparent',
-              outline: 'none'
-            }}
-          />
-          <button
-            onClick={handlePasswordSubmit}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '5px',
-              border: 'none',
-              backgroundColor: '#00ff00',
-              color: '#000',
-              cursor: 'pointer',
-            }}
-          >
-            Authenticate
-          </button>
-          {loading > 0 && (
-            <div className="loading-bar">
-              <div
-                style={{
-                  width: `${loading}%`,
-                  height: '10px',
-                  background: 'green',
-                  marginTop: '20px',
-                }}
-              />
-              <p style={{ color: 'green' }}>{loading}%</p>
-            </div>
-          )}
-        </div>
-      )}
-
       {showGlitter && (
         <div className="glitter-overlay">
           {renderGlitter()}
