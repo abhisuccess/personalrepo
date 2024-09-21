@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, useRef } from 'react';
 import MessageIcon from './components/MessageIcon';
 import HeartCard from './components/HeartCard';
 import './styles.css';
@@ -7,11 +7,10 @@ import backgroundImage from './img/heart-themed-pink-valentine-wallpaper.jpg';
 import tutfile from './tutfile.mp3'; // Import your audio file
 
 function App() {
-  const [stage, setStage] = useState(0); // Start with authentication stage
+  const [stage, setStage] = useState(0); // Ensure stage starts at 0 to load the authentication page first
   const [typedMessage] = useState("My dearest, I’ve admired you for so long... Will you be mine forever?");
   const [isNoButtonVisible, setIsNoButtonVisible] = useState(true);
   const [noButtonAttempts, setNoButtonAttempts] = useState(0);
-  const [finalMessage, setFinalMessage] = useState('');
   const [showGlitter, setShowGlitter] = useState(false);
   const [isGlitterBackground, setIsGlitterBackground] = useState(false);
   const [showHeartMessage, setShowHeartMessage] = useState(false);
@@ -19,6 +18,10 @@ function App() {
   const [password, setPassword] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authProgress, setAuthProgress] = useState(0);
+  const [drawing, setDrawing] = useState(false);
+  const [canvasVisible, setCanvasVisible] = useState(false); // State to control canvas visibility
+  const [finalMessage, setFinalMessage] = useState(''); // State for final message
+  const canvasRef = useRef(null); // Canvas reference for drawing
 
   const playAudio = () => {
     audio.loop = true;
@@ -50,12 +53,13 @@ function App() {
     alert(thankYouMessage);
     
     await addDoc(collection(getFirestore(), 'responses'), { response: 'yes' });
-    setFinalMessage("Abhi got your response! You can close the page now. 💌");
 
     setTimeout(() => {
       setShowGlitter(false);
       setIsGlitterBackground(false);
       setShowHeartMessage(false);
+      setStage(4); // Move to the drawing stage
+      setCanvasVisible(true); // Show the canvas
     }, 5000);
   };
 
@@ -68,7 +72,7 @@ function App() {
     } else {
       alert("Abhi wants you forever... 💔");
       await addDoc(collection(getFirestore(), 'responses'), { response: 'no' });
-      setFinalMessage("Abhi got your response! You can close the page now. 💌");
+      setFinalMessage("Abhi got your response! You can close the page now. Thank you!"); // Set final message
     }
   };
 
@@ -81,7 +85,7 @@ function App() {
         if (prev >= 100) {
           clearInterval(interval);
           if (password.toLowerCase() === 'arjita') {
-            setStage(1); // Move to the main stage after authentication
+            setStage(2); // Move to the next stage after successful authentication
           } else {
             alert('Authentication failed! Please try again.');
           }
@@ -96,6 +100,56 @@ function App() {
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
     authenticatePassword();
+  };
+
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return; // Ensure canvas is not null
+    const ctx = canvas.getContext("2d");
+    setDrawing(true);
+    ctx.beginPath();
+
+    const { offsetX, offsetY } = e.nativeEvent || getTouchPosition(e);
+    ctx.moveTo(offsetX, offsetY);
+  };
+
+  const draw = (e) => {
+    if (!drawing) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return; // Ensure canvas is not null
+    const ctx = canvas.getContext("2d");
+    const { offsetX, offsetY } = e.nativeEvent || getTouchPosition(e);
+    ctx.lineTo(offsetX, offsetY);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    setDrawing(false);
+    const canvas = canvasRef.current;
+    if (!canvas) return; // Ensure canvas is not null
+    const ctx = canvas.getContext("2d");
+    ctx.closePath();
+  };
+
+  const getTouchPosition = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const touch = e.touches[0];
+    return {
+      offsetX: touch.clientX - rect.left,
+      offsetY: touch.clientY - rect.top,
+    };
+  };
+
+  const saveDrawing = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return; // Ensure canvas is not null
+    const imageData = canvas.toDataURL('image/png');
+    await addDoc(collection(getFirestore(), 'drawings'), { image: imageData });
+    alert("Your drawing has been saved! 🌟");
+    setCanvasVisible(false); // Hide the canvas after saving
+    alert("Abhi got your response! You can close the page now. Thank you!");
+    // setFinalMessage("Abhi got your response! You can close the page now. Thank you!"); // Set final message
   };
 
   const renderGlitter = () => {
@@ -140,29 +194,9 @@ function App() {
         </div>
       )}
 
-      {stage === 0 && (
-        <div className="auth-container">
-          <h1 style={{ color: 'white' }}>Enter Password</h1>
-          <form onSubmit={handlePasswordSubmit}>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              style={{ border: '2px solid white', background: 'transparent', color: 'white' }}
-            />
-            <button type="submit" style={{ marginTop: '20px' }}>Submit</button>
-          </form>
-          {isAuthenticating && (
-            <div className="loading">
-              <p style={{ color: 'green' }}>Abhi Success is authenticating... {authProgress}%</p>
-            </div>
-          )}
-        </div>
-      )}
-
       {stage === 1 && <MessageIcon onOpen={handleOpenMessage} />}
       {stage === 2 && <HeartCard onOpen={handleOpenHeart} />}
+
       {stage === 3 && !showGlitter && (
         <div className="final-message">
           <p>{typedMessage}</p>
@@ -170,7 +204,52 @@ function App() {
           {isNoButtonVisible && (
             <button className="heart-button no" onClick={handleNoClick}>No 💔</button>
           )}
-          {finalMessage && <p>{finalMessage}</p>}
+          {finalMessage && (
+            <div className="final-message-box" style={{ color: 'white', backgroundColor: 'pink', padding: '20px', borderRadius: '10px', textAlign: 'center', marginTop: '20px' }}>
+              {finalMessage}
+            </div>
+          )}
+        </div>
+      )}
+
+      {canvasVisible && stage === 4 && (
+        <div className="drawing-container">
+          <h2 style={{ color: 'white' }}>Draw Your Current Mood ✨!</h2>
+          <canvas
+            ref={canvasRef}
+            width={window.innerWidth}
+            height={window.innerHeight * 0.6}
+            onMouseDown={startDrawing}
+            onMouseMove={draw}
+            onMouseUp={stopDrawing}
+            onTouchStart={startDrawing}
+            onTouchMove={draw}
+            onTouchEnd={stopDrawing}
+            style={{ border: '2px solid white', backgroundColor: 'lightgrey' }}
+          />
+          <button onClick={saveDrawing} style={{ marginTop: '20px' }}>Save Drawing</button>
+        </div>
+      )}
+
+      {/* Authentication Page */}
+      {stage === 0 && (
+        <div className="auth-container">
+          <h2 style={{ color: 'white' }}>Enter Password</h2>
+          <form onSubmit={handlePasswordSubmit}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter Password" // Placeholder added here
+              style={{ border: '2px solid white', padding: '15px', fontSize: '16px' }}
+            />
+            <button type="submit" style={{ marginTop: '10px' }}>Submit</button>
+            {isAuthenticating && (
+              <div className="loading" style={{ color: 'green' }}>
+                Authenticating... {authProgress}%
+              </div>
+            )}
+          </form>
         </div>
       )}
     </div>

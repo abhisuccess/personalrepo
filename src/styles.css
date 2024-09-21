@@ -249,7 +249,59 @@ body, html {
   height: 100%;
   font-family: Arial, sans-serif;
 }
+/* styles.css */
+.whiteboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  max-width: 90vw; /* Max width to fit mobile screens */
+  max-height: 90vh; /* Max height to fit mobile screens */
+  overflow: hidden; /* Prevent overflow */
+}
 
+canvas {
+  width: 100%; /* Responsive width */
+  height: auto; /* Maintain aspect ratio */
+  border: 2px solid black;
+  background-color: white;
+  touch-action: none; /* Prevent touch event interference */
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  font-size: 16px; /* Larger text for easier interaction */
+  cursor: pointer;
+  border: none;
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+@media (max-width: 600px) {
+  .whiteboard-container {
+    padding: 15px; /* Reduce padding on mobile */
+  }
+
+  button {
+    font-size: 14px; /* Smaller text for buttons on mobile */
+  }
+}
 .App {
   display: flex;
   justify-content: center;
@@ -270,11 +322,29 @@ input {
   padding: 10px;
   font-size: 16px;
   width: 200px;
+  border: 2px solid white;
+  border-radius: 5px;
+  color: white;
+  background-color: black;
+  margin-bottom: 15px; /* Increased bottom margin for spacing */
+}
+
+button {
+  padding: 10px;
+  font-size: 16px;
+  width: 150px; /* Adjusted width for the button */
+  border: 1px solid white; /* Same border as input */
+  border-radius: 5px;
+  color: white;
+  background-color: black; /* Same background as input */
+  cursor: pointer; /* Change cursor to pointer */
+  margin-top: 20px; /* Space between input and button */
 }
 
 .loading {
   margin-top: 20px;
   font-size: 18px;
+  color: green; /* Change loading text color to green */
 }
 
 @media (max-width: 600px) {
@@ -284,5 +354,9 @@ input {
 
   input {
     width: 80%;
+  }
+
+  button {
+    width: 80%; /* Responsive button width */
   }
 }
