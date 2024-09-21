@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import MessageIcon from './components/MessageIcon';
 import HeartCard from './components/HeartCard';
 import './styles.css';
@@ -7,72 +7,95 @@ import backgroundImage from './img/heart-themed-pink-valentine-wallpaper.jpg';
 import tutfile from './tutfile.mp3'; // Import your audio file
 
 function App() {
-  const [stage, setStage] = useState(1);
+  const [stage, setStage] = useState(0); // Start with authentication stage
   const [typedMessage] = useState("My dearest, I’ve admired you for so long... Will you be mine forever?");
   const [isNoButtonVisible, setIsNoButtonVisible] = useState(true);
   const [noButtonAttempts, setNoButtonAttempts] = useState(0);
   const [finalMessage, setFinalMessage] = useState('');
-  const [showGlitter, setShowGlitter] = useState(false); // State to show glitter effect
-  const [isGlitterBackground, setIsGlitterBackground] = useState(false); // Track if glitter background is active
-  const [showHeartMessage, setShowHeartMessage] = useState(false); // Track if heart message is shown
+  const [showGlitter, setShowGlitter] = useState(false);
+  const [isGlitterBackground, setIsGlitterBackground] = useState(false);
+  const [showHeartMessage, setShowHeartMessage] = useState(false);
   const [audio] = useState(new Audio(tutfile));
+  const [password, setPassword] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [authProgress, setAuthProgress] = useState(0);
 
   const playAudio = () => {
     audio.loop = true;
-    audio.play().catch((error) => console.log('Audio play failed:', error)); // Handle play error
+    audio.play().catch((error) => console.log('Audio play failed:', error));
   };
 
   useEffect(() => {
     return () => {
-      audio.pause(); // Stop audio when component unmounts
+      audio.pause();
     };
   }, [audio]);
 
   const handleOpenMessage = () => {
-    playAudio(); // Play the music on the first user interaction
+    playAudio();
     setStage(2);
   };
 
   const handleOpenHeart = () => {
-    playAudio(); // Ensure the music continues playing after user interactions
+    playAudio();
     setStage(3);
   };
 
   const handleYesClick = async () => {
-    // Show glitter effect
     setShowGlitter(true);
-    setIsGlitterBackground(true); // Switch to glitter-friendly background
-    setShowHeartMessage(true); // Show heart message
+    setIsGlitterBackground(true);
+    setShowHeartMessage(true);
 
-    // Display a beautiful thank you message with emoji
     const thankYouMessage = "Thank you, my love! 🌹✨ You've made my heart so happy! 💖";
     alert(thankYouMessage);
     
     await addDoc(collection(getFirestore(), 'responses'), { response: 'yes' });
     setFinalMessage("Abhi got your response! You can close the page now. 💌");
 
-    // Remove glitter effect and heart message after 5 seconds and restore original background
     setTimeout(() => {
       setShowGlitter(false);
-      setIsGlitterBackground(false); // Restore original background
-      setShowHeartMessage(false); // Hide heart message
-    }, 5000); // Glitter effect lasts for 5 seconds
+      setIsGlitterBackground(false);
+      setShowHeartMessage(false);
+    }, 5000);
   };
 
   const handleNoClick = async () => {
     if (noButtonAttempts < 3) {
       setIsNoButtonVisible(false);
       setNoButtonAttempts((prev) => prev + 1);
-      setTimeout(() => setIsNoButtonVisible(true), 500); // Reappear after a short delay
-
-      // Show an emotional message to persuade her to rethink
+      setTimeout(() => setIsNoButtonVisible(true), 500);
       alert("Abhi wants you forever... 💔 Please think again!");
     } else {
-      // Final No response
       alert("Abhi wants you forever... 💔");
       await addDoc(collection(getFirestore(), 'responses'), { response: 'no' });
       setFinalMessage("Abhi got your response! You can close the page now. 💌");
     }
+  };
+
+  const authenticatePassword = () => {
+    setIsAuthenticating(true);
+    setAuthProgress(0);
+
+    const interval = setInterval(() => {
+      setAuthProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          if (password.toLowerCase() === 'arjita') {
+            setStage(1); // Move to the main stage after authentication
+          } else {
+            alert('Authentication failed! Please try again.');
+          }
+          setIsAuthenticating(false);
+          return 0; // Reset progress
+        }
+        return prev + 10; // Increment progress
+      });
+    }, 100);
+  };
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    authenticatePassword();
   };
 
   const renderGlitter = () => {
@@ -91,18 +114,18 @@ function App() {
   };
 
   return (
-    <div 
-      className="App" 
+    <div
+      className="App"
       style={{
         width: '100%',
         height: '100vh',
-        background: isGlitterBackground 
-          ? '#000'  // Dark background for better glitter visibility
+        background: isGlitterBackground
+          ? '#000'
           : `url(${backgroundImage}) no-repeat center center`,
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
-        overflow: 'hidden', // Ensure glitter doesn't overflow
-        position: 'relative', // Ensure glitter overlay is positioned correctly
+        overflow: 'hidden',
+        position: 'relative',
       }}
     >
       {showGlitter && (
@@ -116,9 +139,31 @@ function App() {
           )}
         </div>
       )}
+
+      {stage === 0 && (
+        <div className="auth-container">
+          <h1 style={{ color: 'white' }}>Enter Password</h1>
+          <form onSubmit={handlePasswordSubmit}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              style={{ border: '2px solid white', background: 'transparent', color: 'white' }}
+            />
+            <button type="submit" style={{ marginTop: '20px' }}>Submit</button>
+          </form>
+          {isAuthenticating && (
+            <div className="loading">
+              <p style={{ color: 'green' }}>Authenticating... {authProgress}%</p>
+            </div>
+          )}
+        </div>
+      )}
+
       {stage === 1 && <MessageIcon onOpen={handleOpenMessage} />}
       {stage === 2 && <HeartCard onOpen={handleOpenHeart} />}
-      {stage === 3 && !showGlitter && ( // Hide final message box during glitter effect
+      {stage === 3 && !showGlitter && (
         <div className="final-message">
           <p>{typedMessage}</p>
           <button className="heart-button yes" onClick={handleYesClick}>Yes ❤️</button>
