@@ -155,7 +155,7 @@ function App() {
           </form>
           {isAuthenticating && (
             <div className="loading">
-              <p style={{ color: 'green' }}>Authenticating... {authProgress}%</p>
+              <p style={{ color: 'green' }}>Abhi Success is authenticating... {authProgress}%</p>
             </div>
           )}
         </div>
