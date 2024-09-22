@@ -1,17 +1,18 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 function Whiteboard() {
   const canvasRef = useRef(null);
   const [drawing, setDrawing] = useState(false);
 
   const startDrawing = (e) => {
+    e.preventDefault(); // Prevent default behavior
     const canvas = canvasRef.current;
-    if (!canvas) return; // Ensure canvas is not null
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
     setDrawing(true);
     ctx.beginPath();
 
-    const { offsetX, offsetY } = e.nativeEvent || getTouchPosition(e);
+    const { offsetX, offsetY } = e.nativeEvent ? e.nativeEvent : getTouchPosition(e);
     ctx.moveTo(offsetX, offsetY);
   };
 
@@ -19,9 +20,9 @@ function Whiteboard() {
     if (!drawing) return;
 
     const canvas = canvasRef.current;
-    if (!canvas) return; // Ensure canvas is not null
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    const { offsetX, offsetY } = e.nativeEvent || getTouchPosition(e);
+    const { offsetX, offsetY } = e.nativeEvent ? e.nativeEvent : getTouchPosition(e);
     ctx.lineTo(offsetX, offsetY);
     ctx.stroke();
   };
@@ -29,7 +30,7 @@ function Whiteboard() {
   const stopDrawing = () => {
     setDrawing(false);
     const canvas = canvasRef.current;
-    if (!canvas) return; // Ensure canvas is not null
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
     ctx.closePath();
   };
@@ -43,12 +44,18 @@ function Whiteboard() {
     };
   };
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight * 0.6;
+    }
+  }, []);
+
   return (
     <div className="whiteboard-container">
       <canvas
         ref={canvasRef}
-        width={window.innerWidth}
-        height={window.innerHeight * 0.6}
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={stopDrawing}

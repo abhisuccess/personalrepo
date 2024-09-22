@@ -109,7 +109,7 @@ function App() {
     setDrawing(true);
     ctx.beginPath();
 
-    const { offsetX, offsetY } = e.nativeEvent || getTouchPosition(e);
+    const { offsetX, offsetY } = e.nativeEvent ? e.nativeEvent : getTouchPosition(e);
     ctx.moveTo(offsetX, offsetY);
   };
 
@@ -119,7 +119,7 @@ function App() {
     const canvas = canvasRef.current;
     if (!canvas) return; // Ensure canvas is not null
     const ctx = canvas.getContext("2d");
-    const { offsetX, offsetY } = e.nativeEvent || getTouchPosition(e);
+    const { offsetX, offsetY } = e.nativeEvent ? e.nativeEvent : getTouchPosition(e);
     ctx.lineTo(offsetX, offsetY);
     ctx.stroke();
   };
@@ -213,7 +213,7 @@ function App() {
 
       {canvasVisible && stage === 4 && (
         <div className="drawing-container">
-          <h2 style={{ color: 'black' }}>"🎨✨ Share Your Current Mood! How are you feeling right now? Express it through a drawing!😊💖</h2>
+          <h2 style={{ color: 'black' }}>🎨✨ Share Your Current Mood! How are you feeling right now? Express it through a drawing!😊💖</h2>
           <canvas
             ref={canvasRef}
             width={window.innerWidth}
@@ -233,24 +233,32 @@ function App() {
       {/* Authentication Page */}
       {stage === 0 && (
         <div className="auth-container">
+          <h1 style={{ color: 'white' }}>Welcome! Please enter the password to proceed:</h1>
           <form onSubmit={handlePasswordSubmit}>
-            <h2 style={{ color: 'white', textAlign: 'center' }}>Enter Password</h2>
             <input
               type="password"
-              placeholder="Enter your password..."
-              className="auth-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ color: 'white', textAlign: 'center' }}
+              className="auth-input"
+        placeholder="Enter your password"
+              style={{
+                // border: '2px solid white',
+                // padding: '10px',
+                // borderRadius: '5px',
+                // marginBottom: '10px',
+                // backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              }}
             />
-            <button type="submit" className="auth-button">Submit</button>
+            <button type="submit" style={{
+              // backgroundColor: 'white',
+              // border: 'none',
+              // padding: '10px',
+              // borderRadius: '5px',
+              // cursor: 'pointer',
+            }}>
+              {isAuthenticating ? `Authenticating... ${authProgress}%` : 'Submit'}
+            </button>
           </form>
-          {isAuthenticating && (
-            <div className="progress-bar">
-              <p style={{ color: 'green' }}>Authenticating: {authProgress}%</p>
-              <div className="progress" style={{ width: `${authProgress}%`, backgroundColor: 'green', height: '10px' }}></div>
-            </div>
-          )}
         </div>
       )}
     </div>
