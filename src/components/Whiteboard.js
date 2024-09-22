@@ -1,70 +1,64 @@
-// Whiteboard.js
-import React, { useRef, useEffect } from 'react';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import React, { useRef, useState } from 'react';
 
-const Whiteboard = ({ promptMessage, onClose }) => {
+function Whiteboard() {
   const canvasRef = useRef(null);
-  const db = getFirestore();
+  const [drawing, setDrawing] = useState(false);
 
-  const saveDrawing = async (dataURL) => {
-    await addDoc(collection(db, 'drawings'), { drawing: dataURL });
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return; // Ensure canvas is not null
+    const ctx = canvas.getContext("2d");
+    setDrawing(true);
+    ctx.beginPath();
+
+    const { offsetX, offsetY } = e.nativeEvent || getTouchPosition(e);
+    ctx.moveTo(offsetX, offsetY);
   };
 
-  const handleSave = () => {
+  const draw = (e) => {
+    if (!drawing) return;
+
     const canvas = canvasRef.current;
-    const dataURL = canvas.toDataURL();
-    saveDrawing(dataURL);
-    onClose(); // Close the whiteboard after saving
+    if (!canvas) return; // Ensure canvas is not null
+    const ctx = canvas.getContext("2d");
+    const { offsetX, offsetY } = e.nativeEvent || getTouchPosition(e);
+    ctx.lineTo(offsetX, offsetY);
+    ctx.stroke();
   };
 
-  useEffect(() => {
+  const stopDrawing = () => {
+    setDrawing(false);
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    let isDrawing = false;
+    if (!canvas) return; // Ensure canvas is not null
+    const ctx = canvas.getContext("2d");
+    ctx.closePath();
+  };
 
-    const startDrawing = (e) => {
-      isDrawing = true;
-      ctx.beginPath();
-      ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+  const getTouchPosition = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const touch = e.touches[0];
+    return {
+      offsetX: touch.clientX - rect.left,
+      offsetY: touch.clientY - rect.top,
     };
-
-    const draw = (e) => {
-      if (!isDrawing) return;
-      ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-      ctx.stroke();
-    };
-
-    const endDrawing = () => {
-      isDrawing = false;
-      ctx.closePath();
-    };
-
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', endDrawing);
-    canvas.addEventListener('mouseleave', endDrawing);
-
-    return () => {
-      canvas.removeEventListener('mousedown', startDrawing);
-      canvas.removeEventListener('mousemove', draw);
-      canvas.removeEventListener('mouseup', endDrawing);
-      canvas.removeEventListener('mouseleave', endDrawing);
-    };
-  }, []);
+  };
 
   return (
     <div className="whiteboard-container">
-      <h2>{promptMessage}</h2>
       <canvas
         ref={canvasRef}
-        width={400}
-        height={300}
-        style={{ border: '2px solid black', backgroundColor: 'white' }}
+        width={window.innerWidth}
+        height={window.innerHeight * 0.6}
+        onMouseDown={startDrawing}
+        onMouseMove={draw}
+        onMouseUp={stopDrawing}
+        onTouchStart={startDrawing}
+        onTouchMove={draw}
+        onTouchEnd={stopDrawing}
+        style={{ border: '2px solid white', backgroundColor: 'lightgrey' }}
       />
-      <button onClick={handleSave}>Save Drawing</button>
-      <button onClick={onClose}>Close</button>
     </div>
   );
-};
+}
 
 export default Whiteboard;

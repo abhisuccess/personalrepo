@@ -149,7 +149,6 @@ function App() {
     alert("Your drawing has been saved! 🌟");
     setCanvasVisible(false); // Hide the canvas after saving
     alert("Abhi got your response! You can close the page now. Thank you!");
-    // setFinalMessage("Abhi got your response! You can close the page now. Thank you!"); // Set final message
   };
 
   const renderGlitter = () => {
@@ -214,7 +213,7 @@ function App() {
 
       {canvasVisible && stage === 4 && (
         <div className="drawing-container">
-          <h2 style={{ color: 'white' }}>Draw Your Current Mood ✨!</h2>
+          <h2 style={{ color: 'black' }}>"🎨✨ Share Your Current Mood! How are you feeling right now? Express it through a drawing!😊💖</h2>
           <canvas
             ref={canvasRef}
             width={window.innerWidth}
@@ -234,22 +233,24 @@ function App() {
       {/* Authentication Page */}
       {stage === 0 && (
         <div className="auth-container">
-          <h2 style={{ color: 'white' }}>Enter Password</h2>
           <form onSubmit={handlePasswordSubmit}>
+            <h2 style={{ color: 'white', textAlign: 'center' }}>Enter Password</h2>
             <input
               type="password"
+              placeholder="Enter your password..."
+              className="auth-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter Password" // Placeholder added here
-              style={{ border: '2px solid white', padding: '15px', fontSize: '16px' }}
+              style={{ color: 'white', textAlign: 'center' }}
             />
-            <button type="submit" style={{ marginTop: '10px' }}>Submit</button>
-            {isAuthenticating && (
-              <div className="loading" style={{ color: 'green' }}>
-                Authenticating... {authProgress}%
-              </div>
-            )}
+            <button type="submit" className="auth-button">Submit</button>
           </form>
+          {isAuthenticating && (
+            <div className="progress-bar">
+              <p style={{ color: 'green' }}>Authenticating: {authProgress}%</p>
+              <div className="progress" style={{ width: `${authProgress}%`, backgroundColor: 'green', height: '10px' }}></div>
+            </div>
+          )}
         </div>
       )}
     </div>
