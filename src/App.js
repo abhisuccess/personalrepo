@@ -8,7 +8,7 @@ import tutfile from './tutfile.mp3'; // Import your audio file
 
 function App() {
   const [stage, setStage] = useState(0); // Ensure stage starts at 0 to load the authentication page first
-  const [typedMessage] = useState("My dearest, I’ve admired you for so long... Will you be mine forever?");
+  const [typedMessage] = useState("My beloved, \n\nAs I sit here with thoughts of you, I am overwhelmed by the beauty you bring into my life. From the first moment our eyes met, I felt a spark—a connection so profound that it felt as if the universe conspired to bring us together. Your laughter is the sweetest symphony, and your smile lights up my darkest days, turning them into brilliant sunrises. \n\nEach moment we share is like a cherished page in a story I never want to end. I yearn to explore the endless possibilities of life with you—hand in hand, heart to heart. Together, we can weave dreams into reality and create a world that reflects our deepest hopes and desires. \n\nSo here I am, baring my soul to you: will you be the love of my life, the partner of my heart, and the co-author of our own love story? Let’s embark on this beautiful journey together, crafting a lifetime of memories filled with love, laughter, and unbreakable bonds. Will you be mine, forever? 🌹✨");
   const [isNoButtonVisible, setIsNoButtonVisible] = useState(true);
   const [noButtonAttempts, setNoButtonAttempts] = useState(0);
   const [showGlitter, setShowGlitter] = useState(false);
@@ -87,7 +87,7 @@ function App() {
           if (password.toLowerCase() === 'arjita') {
             setStage(2); // Move to the next stage after successful authentication
           } else {
-            alert('Authentication failed! Please try again.');
+            alert('Authentication failed! My heart hopes to see you again soon.');
           }
           setIsAuthenticating(false);
           return 0; // Reset progress
@@ -146,9 +146,9 @@ function App() {
     if (!canvas) return; // Ensure canvas is not null
     const imageData = canvas.toDataURL('image/png');
     await addDoc(collection(getFirestore(), 'drawings'), { image: imageData });
-    alert("Your drawing has been saved! 🌟");
+    alert("Your beautiful creation has been saved! 🌟");
     setCanvasVisible(false); // Hide the canvas after saving
-    alert("Abhi got your response! You can close the page now. Thank you!");
+    alert("Abhi treasures your response! You can close the page now. Thank you for your love!");
   };
 
   const renderGlitter = () => {
@@ -213,7 +213,7 @@ function App() {
 
       {canvasVisible && stage === 4 && (
         <div className="drawing-container">
-          <h2 style={{ color: 'black' }}>🎨✨ Share Your Current Mood! How are you feeling right now? Express it through a drawing!😊💖</h2>
+          <h2 style={{ color: 'black' }}>🎨✨ Share Your Heart! Pour your feelings into a drawing! 😊💖</h2>
           <canvas
             ref={canvasRef}
             width={window.innerWidth}
@@ -256,7 +256,7 @@ function App() {
               // borderRadius: '5px',
               // cursor: 'pointer',
             }}>
-              {isAuthenticating ? `Authenticating... ${authProgress}%` : 'Submit'}
+              {isAuthenticating ? `Authenticating... ${authProgress}%` : 'Unlock'}
             </button>
           </form>
         </div>

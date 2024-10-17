@@ -416,6 +416,10 @@ button:hover {
     font-size: 0.9rem; /* Slightly smaller font size */
     padding: 8px; /* Reduced padding */
   }
+
+  .auth-container {
+    padding: 15px; /* Adjust padding for mobile */
+  }
 }
 
 @media (max-width: 480px) {
@@ -427,5 +431,9 @@ button:hover {
   .auth-container button {
     font-size: 0.8rem;
     padding: 7px;
+  }
+
+  .auth-container {
+    padding: 10px; /* Further reduce padding for very small screens */
   }
 }
