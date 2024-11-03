@@ -84,7 +84,7 @@ function App() {
       setAuthProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          if (password.toLowerCase() === 'arjita') {
+          if (password.toLowerCase() === 'arjitaaaa') {
             setStage(2); // Move to the next stage after successful authentication
           } else {
             alert('Authentication failed! My heart hopes to see you again soon.');
@@ -233,14 +233,14 @@ function App() {
       {/* Authentication Page */}
       {stage === 0 && (
         <div className="auth-container">
-          <h1 style={{ color: 'white' }}>Welcome! Please enter the password to proceed:</h1>
+          <h1 style={{ color: 'white' }}>Welcome! Abhi wants to verify you :</h1>
           <form onSubmit={handlePasswordSubmit}>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="auth-input"
-        placeholder="Enter your password"
+        placeholder="Enter password to access message "
               style={{
                 // border: '2px solid white',
                 // padding: '10px',
